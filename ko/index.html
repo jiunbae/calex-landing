@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calex — 회의록은 이제 그만</title>
+<meta name="description" content="Calex는 상시 청취형 회의 기억 앱입니다. 대화를 캡처해 기기 안에서 전사하고 요약·결정·할 일로 자동 정리합니다. iPhone, iPad, Mac.">
+<link rel="canonical" href="https://calex.jiun.dev/ko/">
+<meta property="og:title" content="Calex — 회의록은 이제 그만">
+<meta property="og:description" content="상시 청취형 회의 기억. 온디바이스. 프라이버시. 대화를 요약·결정·할 일로 바꿉니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://calex.jiun.dev/ko/">
+<meta property="og:image" content="https://calex.jiun.dev/shots/ios-today.png">
+<meta name="theme-color" content="#6f7cff">
+<style>
+  :root{
+    --indigo:#6f7cff; --purple:#9a6bff; --grad:linear-gradient(135deg,#6f7cff,#9a6bff);
+    --ink:#0f1424; --muted:#5b6784; --faint:#8791a8; --line:rgba(20,26,55,.10);
+    --bg:#ffffff; --bg-2:#f7f8fc; --panel:#ffffff; --panel-2:#f4f5fb; --green:#1faf68; --amber:#e0932a;
+    --shadow-sm:0 2px 8px rgba(38,44,110,.06);
+    --shadow:0 30px 70px rgba(38,44,110,.16),0 8px 22px rgba(38,44,110,.08);
+    --shadow-lg:0 50px 110px rgba(38,44,110,.24),0 14px 32px rgba(38,44,110,.10);
+    color-scheme:light dark;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --ink:#f2f3fa; --muted:#a3adc6; --faint:#7d879e; --line:rgba(255,255,255,.12);
+      --bg:#0b0d14; --bg-2:#0f121b; --panel:#13161f; --panel-2:#171b26; --green:#3fd18b;
+      --shadow-sm:0 2px 8px rgba(0,0,0,.4);
+      --shadow:0 30px 70px rgba(0,0,0,.55),0 8px 22px rgba(0,0,0,.4);
+      --shadow-lg:0 50px 110px rgba(0,0,0,.66),0 14px 32px rgba(0,0,0,.5); }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Apple SD Gothic Neo","Pretendard","Segoe UI",Roboto,sans-serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;word-break:keep-all}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:saturate(180%) blur(16px);
+    background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;gap:14px;height:64px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:19px}
+  .mark{width:30px;height:30px;border-radius:9px;background:var(--grad);
+    box-shadow:0 6px 16px rgba(122,110,255,.45);position:relative;flex:none}
+  .mark::after{content:"";position:absolute;inset:8px 8px auto 8px;height:3px;border-radius:2px;background:rgba(255,255,255,.92);
+    box-shadow:0 6px 0 rgba(255,255,255,.6),0 12px 0 rgba(255,255,255,.34)}
+  .nav-links{margin-left:auto;display:flex;gap:6px;align-items:center}
+  .nav-links a{padding:8px 13px;border-radius:999px;font-size:15px;font-weight:600;color:var(--muted)}
+  .nav-links a:hover{color:var(--ink);background:var(--panel-2)}
+  .nav-links a.lang{border:1px solid var(--line);color:var(--ink)}
+  @media (max-width:680px){ .nav-links a:not(.lang){display:none} }
+
+  /* Hero */
+  .hero{position:relative;padding:88px 0 44px}
+  .hero::before{content:"";position:absolute;inset:-12% -20% auto -20%;height:720px;z-index:-1;
+    background:radial-gradient(58% 60% at 28% 18%,rgba(122,124,255,.30),transparent 70%),
+               radial-gradient(50% 50% at 88% 6%,rgba(154,107,255,.24),transparent 70%);filter:blur(8px)}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;
+    color:var(--muted);background:var(--panel-2);border:1px solid var(--line);padding:7px 13px;border-radius:999px;margin-bottom:24px}
+  .eyebrow .g{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(37,181,111,.18)}
+  h1{font-size:clamp(40px,6.4vw,68px);line-height:1.06;letter-spacing:-.035em;font-weight:840;margin-bottom:22px}
+  h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lead{font-size:20px;color:var(--muted);max-width:520px;margin-bottom:32px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:16px;padding:14px 22px;border-radius:14px;transition:transform .15s ease,box-shadow .15s ease}
+  .btn.pri{background:var(--grad);color:#fff;box-shadow:0 10px 26px rgba(122,110,255,.4)}
+  .btn.pri:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(122,110,255,.52)}
+  .btn.sec{background:var(--panel-2);color:var(--ink);border:1px solid var(--line)}
+  .btn.sec:hover{transform:translateY(-1px)}
+  .platforms{margin-top:22px;font-size:14px;color:var(--faint);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .platforms b{color:var(--muted);font-weight:700}
+
+  /* Device frames */
+  .hero-devices{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:0;min-height:520px}
+  .hero-devices .glow{position:absolute;inset:6% 4% 10%;z-index:-1;background:var(--grad);filter:blur(72px);opacity:.30;border-radius:50%}
+  .phone{background:#0b0b0f;border-radius:44px;padding:9px;box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.06)}
+  .phone img{border-radius:36px;width:100%;display:block}
+  .phone.lead-phone{width:262px;position:relative;z-index:2}
+  .phone.side{width:210px;position:absolute;bottom:34px;z-index:1;opacity:.98}
+  .phone.side.left{left:2%;transform:rotate(-6deg)}
+  .phone.side.right{right:2%;transform:rotate(6deg)}
+  @media (max-width:980px){ .phone.side{display:none} .hero-devices{min-height:auto} .phone.lead-phone{width:248px} }
+
+  /* Sections */
+  section.blk{padding:64px 0}
+  .kicker{font-size:13px;font-weight:800;letter-spacing:.07em;color:var(--indigo);margin-bottom:12px;text-transform:uppercase}
+  h2{font-size:clamp(27px,4vw,40px);letter-spacing:-.025em;font-weight:820;margin-bottom:14px;line-height:1.22}
+  .sub{color:var(--muted);font-size:18px;max-width:660px}
+  .center{text-align:center;margin:0 auto}
+  .center .sub{margin-left:auto;margin-right:auto}
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow-sm)}
+  .step .n{width:36px;height:36px;border-radius:10px;background:var(--grad);color:#fff;font-weight:800;display:grid;place-items:center;margin-bottom:15px}
+  .step h3{font-size:18px;letter-spacing:-.01em;margin-bottom:7px}
+  .step p{color:var(--muted);font-size:15px}
+
+  /* Phone showcase row */
+  .shots{display:flex;gap:26px;justify-content:center;align-items:flex-end;flex-wrap:wrap;margin-top:44px}
+  .shot{width:246px}
+  .shot .phone{width:100%}
+  .shot .cap{margin-top:16px;text-align:center}
+  .shot .cap b{display:block;font-size:15.5px;letter-spacing:-.01em}
+  .shot .cap span{font-size:13.5px;color:var(--faint)}
+  .shot.mid{margin-bottom:30px}
+
+  /* Mac window */
+  .macwrap{margin-top:44px;position:relative}
+  .macwrap .glow{position:absolute;inset:8% 12% -4%;z-index:-1;background:var(--grad);filter:blur(80px);opacity:.22;border-radius:50%}
+  .macwin{max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-lg);background:var(--panel)}
+  .macbar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  .macbar .tl{width:12px;height:12px;border-radius:50%}
+  .macbar .t{margin:0 auto;font-size:13px;font-weight:700;color:var(--faint);transform:translateX(-24px)}
+  .macwin img{width:100%;display:block}
+
+  /* Feature grid */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  .fc{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;transition:transform .15s ease,border-color .15s ease;box-shadow:var(--shadow-sm)}
+  .fc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--indigo) 45%,var(--line))}
+  .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:21px;margin-bottom:15px}
+  .fc h3{font-size:18px;letter-spacing:-.01em;margin-bottom:7px}
+  .fc p{color:var(--muted);font-size:15px}
+
+  /* Use cases */
+  .uc{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  .ucc{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow-sm)}
+  .ucc .who{font-size:13px;font-weight:800;color:var(--indigo);letter-spacing:.02em;margin-bottom:12px}
+  .ucc .ba{font-size:15px;color:var(--muted);margin:8px 0;display:flex;gap:9px;align-items:flex-start}
+  .ucc .ba .tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;flex:none;margin-top:2px}
+  .ucc .ba .b{background:rgba(220,80,80,.12);color:#d05a5a}
+  .ucc .ba .a{background:rgba(31,175,104,.14);color:var(--green)}
+
+  /* Privacy */
+  .privacy{background:linear-gradient(135deg,rgba(31,175,104,.10),rgba(122,124,255,.08));
+    border:1px solid var(--line);border-radius:24px;padding:44px;display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+  .privacy .lock{width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,#1faf68,#12a3a3);color:#fff;display:grid;place-items:center;font-size:30px;flex:none;box-shadow:0 12px 28px rgba(31,175,104,.4)}
+  .privacy .txt{flex:1;min-width:280px}
+  .privacy h2{margin-bottom:8px}
+
+  /* FAQ */
+  .faq{max-width:820px;margin:40px auto 0}
+  .qa{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .qa summary{cursor:pointer;list-style:none;padding:20px 22px;font-weight:700;font-size:16.5px;letter-spacing:-.01em;display:flex;align-items:center;gap:12px}
+  .qa summary::-webkit-details-marker{display:none}
+  .qa summary::after{content:"+";margin-left:auto;font-size:22px;color:var(--faint);font-weight:400;transition:transform .2s ease}
+  .qa[open] summary::after{transform:rotate(45deg)}
+  .qa .ans{padding:0 22px 20px;color:var(--muted);font-size:15.5px}
+
+  /* Final CTA */
+  .finalcta{text-align:center;background:var(--grad);border-radius:26px;padding:56px 32px;color:#fff;box-shadow:var(--shadow)}
+  .finalcta h2{color:#fff;margin-bottom:12px}
+  .finalcta p{color:rgba(255,255,255,.9);font-size:18px;max-width:520px;margin:0 auto 26px}
+  .finalcta .btn.white{background:#fff;color:var(--ink)}
+  .finalcta .platforms{justify-content:center;color:rgba(255,255,255,.82)}
+  .finalcta .platforms b{color:#fff}
+
+  /* Footer */
+  footer{border-top:1px solid var(--line);margin-top:36px}
+  .foot{display:flex;align-items:center;gap:16px;padding:28px 0;color:var(--muted);font-size:14px;flex-wrap:wrap}
+  .foot a{font-weight:600}.foot a:hover{color:var(--ink)}
+  .foot .sp{margin-left:auto}
+
+  @media (max-width:920px){ .hero-grid{grid-template-columns:1fr;gap:36px} .steps,.feat,.uc{grid-template-columns:1fr 1fr} }
+  @media (max-width:600px){ .steps,.feat,.uc{grid-template-columns:1fr} .hero{padding:56px 0 24px} section.blk{padding:48px 0} .privacy{padding:30px} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="./"><span class="mark"></span>Calex</a>
+    <div class="nav-links">
+      <a href="#how">작동 방식</a>
+      <a href="#screens">화면</a>
+      <a href="#features">기능</a>
+      <a href="#faq">FAQ</a>
+      <a href="privacy.html">개인정보</a>
+      <a href="../" class="lang">English</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="g"></span>온디바이스 · 기본값이 프라이버시</span>
+      <h1>회의록은<br>이제 <span class="g">그만.</span></h1>
+      <p class="lead">Calex는 대화를 듣고, 요약·결정·할 일로 자동 정리합니다 — 별도 조작 없이, 전부 당신의 기기 안에서.</p>
+      <div class="cta">
+        <a class="btn pri" href="support.html">시작하기 →</a>
+        <a class="btn sec" href="privacy.html">데이터가 안전하게 지켜지는 방식</a>
+      </div>
+      <div class="platforms"><b>iPhone · iPad · Mac</b>&nbsp;·&nbsp;한국어 &amp; 영어&nbsp;·&nbsp;계정 없이 바로 사용</div>
+    </div>
+    <div class="hero-devices">
+      <div class="glow"></div>
+      <div class="phone side left"><img src="../shots/ios-tasks.png" alt="Calex 할 일 화면" loading="eager"></div>
+      <div class="phone side right"><img src="../shots/ios-decisions.png" alt="Calex 결정 화면" loading="eager"></div>
+      <div class="phone lead-phone"><img src="../shots/ios-today.png" alt="Calex 투데이 화면 — 리스닝과 최신 요약" loading="eager"></div>
+    </div>
+  </div>
+</header>
+
+<section class="blk wrap" id="how">
+  <div class="kicker">작동 방식</div>
+  <h2>세 단계, 그다음엔 아무것도.</h2>
+  <p class="sub">필기도, 별도 조작도 없습니다. 켜두고 대화에만 집중하세요.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>듣기 켜기</h3><p>투데이 화면의 토글 하나로 시작 — 원하는 시간대에만 듣도록 스케줄도 설정할 수 있어요.</p></div>
+    <div class="step"><div class="n">2</div><h3>그냥 대화하기</h3><p>회의, 통화, 일상 대화. Calex가 기기 안에서 실시간으로 전사합니다.</p></div>
+    <div class="step"><div class="n">3</div><h3>요약 받기</h3><p>대화가 끝나고 몇 분 안에 요약·결정·할 일이 나타나 바로 실행할 수 있어요.</p></div>
+  </div>
+</section>
+
+<section class="blk wrap" id="screens">
+  <div class="center" style="max-width:660px">
+    <div class="kicker">실제 화면</div>
+    <h2>하루에 자연스럽게 녹아듭니다.</h2>
+    <p class="sub">캡처한 대화가 요약·할 일·결정으로 정리됩니다. 실제 앱 화면입니다.</p>
+  </div>
+  <div class="shots">
+    <div class="shot">
+      <div class="phone"><img src="../shots/ios-today.png" alt="Calex 투데이 화면 — 리스닝과 최신 요약" loading="lazy"></div>
+      <div class="cap"><b>투데이</b><span>리스닝 상태와 최신 요약</span></div>
+    </div>
+    <div class="shot mid">
+      <div class="phone"><img src="../shots/ios-tasks.png" alt="Calex 할 일 화면 — 근거 대화로 연결되는 작업" loading="lazy"></div>
+      <div class="cap"><b>할 일</b><span>근거 대화로 연결되는 작업</span></div>
+    </div>
+    <div class="shot">
+      <div class="phone"><img src="../shots/ios-decisions.png" alt="Calex 결정 화면 — 확정된 결정과 담당자" loading="lazy"></div>
+      <div class="cap"><b>결정</b><span>확정된 결정과 담당자</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="center" style="max-width:660px">
+    <div class="kicker">Mac에서도 그대로</div>
+    <h2>데스크톱에서 한눈에.</h2>
+    <p class="sub">메뉴 막대에 머물다가, 필요할 때 창을 열어 요약·할 일·결정을 넓은 화면에서 확인하세요.</p>
+  </div>
+  <div class="macwrap">
+    <div class="glow"></div>
+    <div class="macwin">
+      <div class="macbar">
+        <span class="tl" style="background:#ff5f57"></span>
+        <span class="tl" style="background:#febc2e"></span>
+        <span class="tl" style="background:#28c840"></span>
+        <span class="t">Calex 대시보드</span>
+      </div>
+      <img src="../shots/mac-today-ko.png" alt="Mac용 Calex 대시보드 — 요약·할 일·결정" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section class="blk wrap" id="features">
+  <div class="kicker">무엇을 얻나요</div>
+  <h2>대화에서 나온 모든 것,<br>당신이 적을 필요 없이.</h2>
+  <div class="feat">
+    <div class="fc"><div class="ic" style="background:rgba(111,124,255,.14);color:#6f7cff">🎙️</div><h3>상시 청취</h3><p>필요할 때 주변 대화를 캡처 — 앱이나 위젯에서 켜고 끕니다.</p></div>
+    <div class="fc"><div class="ic" style="background:rgba(154,107,255,.14);color:#9a6bff">✦</div><h3>AI 요약</h3><p>긴 전사가 핵심·결정·후속 조치가 담긴 간결한 브리프로 정리됩니다.</p></div>
+    <div class="fc"><div class="ic" style="background:rgba(31,175,104,.14);color:#1faf68">📅</div><h3>하루 리포트</h3><p>기억할 만한 하이라이트·결정·할 일을 하루 끝에 깔끔하게 되짚어 줍니다.</p></div>
+    <div class="fc"><div class="ic" style="background:rgba(240,160,60,.16);color:#e0932a">✓</div><h3>결정 &amp; 할 일</h3><p>실행 항목과 결정을 자동 추출하고, 각각 원본 대화로 연결합니다.</p></div>
+    <div class="fc"><div class="ic" style="background:rgba(31,175,104,.14);color:#1faf68">🔒</div><h3>온디바이스 · 프라이버시</h3><p>전사와 AI가 기기에서 동작합니다. 계정도 분석도 없이 — 데이터가 기기를 떠나지 않습니다.</p></div>
+    <div class="fc"><div class="ic" style="background:rgba(111,124,255,.14);color:#6f7cff">📲</div><h3>위젯 &amp; 동기화</h3><p>홈 화면·잠금 화면·Mac에서 녹음 상태와 최근 요약을 바로 확인하세요.</p></div>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="kicker">누구에게</div>
+  <h2>기록이 일이 되지 않도록.</h2>
+  <div class="uc">
+    <div class="ucc">
+      <div class="who">지식 노동자 · PM</div>
+      <div class="ba"><span class="tag b">이전</span><span>회의가 끝나면 손으로 정리 → 할 일 누락, 중복 팔로업.</span></div>
+      <div class="ba"><span class="tag a">이후</span><span>회의 중 전사 → 중요한 실행 항목만 할 일로 자동 정리.</span></div>
+    </div>
+    <div class="ucc">
+      <div class="who">창작자 · 연구자</div>
+      <div class="ba"><span class="tag b">이전</span><span>인터뷰 녹취 풀기와 요약에 하루, 핵심 인용 누락.</span></div>
+      <div class="ba"><span class="tag a">이후</span><span>대화가 요약·인용·할 일로 분해되어 편집 시간 절약.</span></div>
+    </div>
+    <div class="ucc">
+      <div class="who">현장 매니저</div>
+      <div class="ba"><span class="tag b">이전</span><span>이동 중 통화를 종이에 적고 사무실에서 다시 정리.</span></div>
+      <div class="ba"><span class="tag a">이후</span><span>통화를 자동 기록, 중요한 후속 업무만 놓치지 않게.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="privacy">
+    <div class="lock">🔒</div>
+    <div class="txt">
+      <div class="kicker" style="color:#1faf68">설계부터 프라이버시</div>
+      <h2>대화는 당신의 기기 안에 머뭅니다.</h2>
+      <p class="sub">기본적으로 오디오·전사·요약이 iPhone·iPad·Mac을 떠나지 않습니다. Calex 계정도, 서버도, 추적도 없습니다. 선택적 클라우드 엔진은 당신의 키로 직접 켤 때만 동작합니다.</p>
+      <div style="margin-top:18px"><a class="btn sec" href="privacy.html">개인정보 처리방침 보기 →</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk wrap" id="faq">
+  <div class="center" style="max-width:660px">
+    <div class="kicker">자주 묻는 질문</div>
+    <h2>궁금한 점들.</h2>
+  </div>
+  <div class="faq">
+    <details class="qa"><summary>모든 대화가 클라우드로 전송되나요?</summary><div class="ans">아니요. 기본적으로 전사·요약·할 일 데이터는 당신의 기기에 로컬 저장됩니다. 클라우드 엔진은 직접 키를 넣고 켤 때만 사용됩니다.</div></details>
+    <details class="qa"><summary>민감한 대화는 어떻게 보호하나요?</summary><div class="ans">언제든지 리스닝을 일시 중지하거나, 스케줄로 특정 시간대에만 듣도록 설정할 수 있습니다. 저장된 데이터는 기기의 디스크 암호화로 보호됩니다.</div></details>
+    <details class="qa"><summary>Calex 팀이 제 데이터를 볼 수 있나요?</summary><div class="ans">기본 설정에서는 어떤 음성·텍스트 데이터도 서버로 전송되지 않으므로 접근할 수 없습니다. 계정도, 분석 추적도 없습니다.</div></details>
+    <details class="qa"><summary>어떤 기기에서 쓸 수 있나요?</summary><div class="ans">iPhone, iPad, Mac에서 동작합니다. 한국어와 영어를 지원하며, 위젯으로 녹음 상태와 최근 요약을 빠르게 확인할 수 있습니다.</div></details>
+    <details class="qa"><summary>인터넷 없이도 작동하나요?</summary><div class="ans">네. 전사와 요약이 온디바이스로 처리되므로 오프라인에서도 핵심 기능을 사용할 수 있습니다.</div></details>
+  </div>
+</section>
+
+<section class="blk wrap">
+  <div class="finalcta">
+    <h2>회의록, 이제 앱에 맡기세요.</h2>
+    <p>켜두면 나머지는 Calex가 합니다. 대화는 당신의 기기 안에서만.</p>
+    <a class="btn white" href="support.html">시작하기 →</a>
+    <div class="platforms" style="margin-top:22px"><b>iPhone · iPad · Mac</b>&nbsp;·&nbsp;온디바이스</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="./" style="font-size:17px"><span class="mark" style="width:24px;height:24px"></span>Calex</a>
+    <a href="privacy.html">개인정보</a>
+    <a href="support.html">지원</a>
+    <a href="../">English</a>
+    <span class="sp">© 2026 Jiun Bae · <a href="https://rtzr.ai">리턴제로</a> 제작</span>
+  </div>
+</footer>
+
+</body>
+</html>
