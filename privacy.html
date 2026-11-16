@@ -74,7 +74,7 @@
 
   <h2>10. Speaker identification, integrations, and models (macOS and iOS)</h2>
   <p>If you enroll a voice for speaker identification, Calex asks for your consent first and stores the voiceprint only on that device; it is not synced. You can delete voiceprints or withdraw consent, which erases them, in Settings.</p>
-  <p>Webhooks and integrations you set up (for example Notion) send the summaries, to-dos, or events you choose to the destinations you configure, under those services' terms. Provider API keys and integration tokens are stored in the Apple Keychain.</p>
+  <p>Webhooks and integrations you set up (Slack, Discord, Telegram, Notion, or a generic webhook) send only the events you subscribe to, such as summaries, to-dos, daily reports, listening started or stopped, or raw transcripts, to the destinations you configure, under those services' terms. No events are subscribed by default, and Calex warns you that raw transcripts are sensitive before you subscribe to them. Provider API keys and integration tokens are stored in the Apple Keychain.</p>
   <p>When you choose an on-device speech or language model, Calex downloads it from Hugging Face, GitHub, or Apple-hosted asset packs. These are model data, not your content; no recordings or transcripts are uploaded to download them.</p>
 
   <h2>11. Calex for Windows</h2>
